@@ -6,7 +6,7 @@ html
         link(rel="stylesheet" href="style.css")
     body
         p="Page name: " + pageName
-        each menuItem in items
+        each menuItem in menu_items
             if menuItem.key == pageName
                 p.active
                     a(href=menuItem.key + ".html")=menuItem.name
