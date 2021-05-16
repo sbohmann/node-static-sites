@@ -1,4 +1,5 @@
 /.git
 /.nova
+/node_modules
 /target
 /test/target

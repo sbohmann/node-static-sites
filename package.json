@@ -1,0 +1,15 @@
+{
+  "name": "nova-static-site",
+  "version": "1.0.0",
+  "description": "A static site generator using node, pug, and markdown",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "jstransformer-markdown-it": "^2.1.0",
+    "markdown-it": "^12.0.6",
+    "pretty": "^2.0.0",
+    "pug": "^3.0.2"
+  }
+}
