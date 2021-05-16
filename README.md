@@ -25,3 +25,18 @@ Do not clone this project into an existing folder containing important files.
 # Generating the pages
 
     node generate.js
+
+All with names ending in `.page.pug` files inside the source directory, at any level, will be generated as .htnl files at the same location relative to the target directory.
+
+Files in the same location of the same name, but with names ending in `.json` instead of `.page.pug` will be read as the source of variables and configuration.
+
+In case the configuration value `basedir` is specified, it will be overwritten with the source directory (by default, `./src`) before generating the output.
+
+Example:
+
+    src/books/giraffes.page.pug
+    src/books/giraffes.json
+
+`.pug` files not named `.page.pug` will be ignored.
+
+A file names `giraffes.page.json` will not be associated with `giraffes.page.pug`. The suffix `page.pug` must be replaced with `.json` in order for a configuration file to be associated with a page file.

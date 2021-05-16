@@ -20,18 +20,25 @@ const {
 
 const filesWritten = new Set();
 
+function addFileWritten(path) {
+  if (filesWritten.has(path)) {
+    throw RangeError("Attempting to write output file twice: [" + path + "]");
+  }
+  filesWritten.add(path);
+}
+
 function walkDirectory(directory, handleFile) {
-  function walkSubdirectories(relativePath) {
-    let subDirectory = path.join(directory, relativePath);
+  function walkSubdirectories(relativeSubDirectoryPath) {
+    let subDirectory = path.join(directory, relativeSubDirectoryPath);
     let directory_content = fs.readdirSync(subDirectory);
     console.log(directory_content);
-    for (let file of directory_content) {
-      const filePath = path.join(directory, relativePath, file);
+    for (let fileName of directory_content) {
+      const filePath = path.join(directory, relativeSubDirectoryPath, fileName);
       const fileInformation = fs.lstatSync(filePath);
-      if (fileInformation.isFile(file)) {
-        handleFile(filePath, relativePath);
-      } else if (fileInformation.isDirectory(file)) {
-        walkSubdirectories(path.join(relativePath, file));
+      if (fileInformation.isFile(filePath)) {
+        handleFile(fileName, filePath, relativeSubDirectoryPath);
+      } else if (fileInformation.isDirectory()) {
+        walkSubdirectories(path.join(relativeSubDirectoryPath, fileName));
       }
     }
   }
@@ -39,34 +46,93 @@ function walkDirectory(directory, handleFile) {
 }
 
 function generatePages() {
-  walkDirectory(source_directory, (filePath, subDirectory) => {
-    const pageSuffix = ".page.pug";
-    if (filePath.endsWith(pageSuffix)) {
-      console.log(
-        "Rendering source file [" +
-          filePath +
-          "] in sub-directory [" +
-          subDirectory +
-          "]"
-      );
-      let pugOptions = {};
-      const dataPath =
-        filePath.substr(0, filePath.length - pageSuffix.length) + ".json";
-      if (fs.existsSync(dataPath) && fs.lstatSync(dataPath).isFile()) {
-        let rawData = fs.readFileSync(dataPath);
-        pugOptions = JSON.parse(rawData);
+  walkDirectory(
+    source_directory,
+    (fileName, filePath, relativeSubDirectoryPath) => {
+      const pageSuffix = ".page.pug";
+      if (filePath.endsWith(pageSuffix)) {
+        let pugOptions = {};
+        const dataPath =
+          filePath.substr(0, filePath.length - pageSuffix.length) + ".json";
+        if (fs.existsSync(dataPath) && fs.lstatSync(dataPath).isFile()) {
+          let rawData = fs.readFileSync(dataPath);
+          pugOptions = JSON.parse(rawData);
+        }
+        pugOptions.basedir = source_directory;
+        let prettyOptions = {
+          ocd: true,
+        };
+        let rawOutput = pug.renderFile(filePath, pugOptions);
+        let formattedOutput = pretty(rawOutput, prettyOptions);
+        let outputFileName =
+          fileName.substr(0, fileName.length - pageSuffix.length) + ".html";
+        let outputDirectory = path.join(
+          target_directory,
+          relativeSubDirectoryPath
+        );
+        let outputPath = path.join(outputDirectory, outputFileName);
+        if (!fs.existsSync(outputDirectory)) {
+          fs.mkdirSync(outputDirectory, { recursive: true });
+        }
+        if (!fs.existsSync(outputPath) || overwrite_silently) {
+          addFileWritten(outputPath);
+          fs.writeFileSync(outputPath, formattedOutput);
+        } else {
+          console.log("Not overwriting existing file [" + outputPath + "]");
+        }
       }
-      pugOptions.basedir = source_directory;
-      let prettyOptions = {
-        ocd: true,
-      };
-      console.log(pretty(pug.renderFile(filePath, pugOptions), prettyOptions));
     }
-  });
+  );
 }
 
-function copy_static_content(path) {
-  console.log(fs.readdirSync(path));
+function copy_static_content() {
+  walkDirectory(
+    static_content_directory,
+    (fileName, filePath, relativeSubDirectoryPath) => {
+      let outputDirectory = path.join(
+        target_directory,
+        relativeSubDirectoryPath
+      );
+      let outputPath = path.join(outputDirectory, fileName);
+      if (!fs.existsSync(outputDirectory)) {
+        fs.mkdirSync(outputDirectory, { recursive: true });
+      }
+      if (!fs.existsSync(outputPath) || overwrite_silently) {
+        addFileWritten(outputPath);
+        fs.copyFileSync(filePath, outputPath);
+      } else {
+        console.log("Not overwriting existing file [" + outputPath + "]");
+      }
+    }
+  );
+}
+
+function deleteNonGeneratedFiles() {
+  function walkSubdirectories(relativeSubDirectoryPath) {
+    let subDirectory = path.join(target_directory, relativeSubDirectoryPath);
+    let directory_content = fs.readdirSync(subDirectory);
+    console.log(directory_content);
+    for (let fileName of directory_content) {
+      const filePath = path.join(
+        target_directory,
+        relativeSubDirectoryPath,
+        fileName
+      );
+      const fileInformation = fs.lstatSync(filePath);
+      if (fileInformation.isFile(filePath)) {
+        if (!filesWritten.has(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      } else if (fileInformation.isDirectory()) {
+        let subDirectoryPath = path.join(subDirectory, fileName);
+        walkSubdirectories(path.join(relativeSubDirectoryPath, fileName));
+        if (fs.readdirSync(subDirectoryPath).length == 0) {
+          fs.rmdirSync(subDirectoryPath);
+        }
+      }
+    }
+  }
+  walkSubdirectories("");
 }
 
 function create_directory(path) {
@@ -81,3 +147,6 @@ create_directory(target_directory);
 
 generatePages(source_directory);
 copy_static_content(static_content_directory);
+if (delete_non_generated_files) {
+  deleteNonGeneratedFiles();
+}
