@@ -18,6 +18,8 @@ const {
   delete_non_generated_files,
 } = read_configuration();
 
+const globals = JSON.parse(fs.readFileSync("globals.json"));
+
 const filesWritten = new Set();
 
 function addFileWritten(path) {
@@ -51,14 +53,17 @@ function generatePages() {
     (fileName, filePath, relativeSubDirectoryPath) => {
       const pageSuffix = ".page.pug";
       if (filePath.endsWith(pageSuffix)) {
-        let pugOptions = {};
-        const dataPath =
-          filePath.substr(0, filePath.length - pageSuffix.length) + ".json";
+        let pugOptions = Object.assign({}, globals);
+        let pageName = filePath.substr(0, filePath.length - pageSuffix.length);
+        const dataPath = pageName + ".json";
         if (fs.existsSync(dataPath) && fs.lstatSync(dataPath).isFile()) {
           let rawData = fs.readFileSync(dataPath);
-          pugOptions = JSON.parse(rawData);
+          Object.assign(pugOptions, JSON.parse(rawData));
         }
         pugOptions.basedir = source_directory;
+        pugOptions.pageName = pageName;
+        pugOptions.pageDirectory = relativeSubDirectoryPath;
+        pugOptions.pagePath = path.join(relativeSubDirectoryPath, pageName);
         let prettyOptions = {
           ocd: true,
         };
