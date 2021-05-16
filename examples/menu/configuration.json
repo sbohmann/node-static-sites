@@ -1,0 +1,7 @@
+{
+  "source_directory": "src",
+  "static_content_directory": "static",
+  "target_directory": "target",
+  "overwrite_silently": true,
+  "delete_non_generated_files": true
+}

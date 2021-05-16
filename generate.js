@@ -54,8 +54,9 @@ function generatePages() {
       const pageSuffix = ".page.pug";
       if (filePath.endsWith(pageSuffix)) {
         let pugOptions = Object.assign({}, globals);
-        let pageName = filePath.substr(0, filePath.length - pageSuffix.length);
-        const dataPath = pageName + ".json";
+        let pageName = fileName.substr(0, fileName.length - pageSuffix.length);
+        let pagePath = filePath.substr(0, filePath.length - pageSuffix.length);
+        const dataPath = pagePath + ".json";
         if (fs.existsSync(dataPath) && fs.lstatSync(dataPath).isFile()) {
           let rawData = fs.readFileSync(dataPath);
           Object.assign(pugOptions, JSON.parse(rawData));
@@ -63,7 +64,7 @@ function generatePages() {
         pugOptions.basedir = source_directory;
         pugOptions.pageName = pageName;
         pugOptions.pageDirectory = relativeSubDirectoryPath;
-        pugOptions.pagePath = path.join(relativeSubDirectoryPath, pageName);
+        pugOptions.pagePath = path.join(relativeSubDirectoryPath, pagePath);
         let prettyOptions = {
           ocd: true,
         };

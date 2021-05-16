@@ -1,0 +1,20 @@
+{
+  "menu_items": [
+    {
+      "key": "index",
+      "name": "Horses"
+    },
+    {
+      "key": "brown",
+      "name": "Brown Horses"
+    },
+    {
+      "key": "chequered",
+      "name": "Multi-Color Horses"
+    },
+    {
+      "key": "white",
+      "name": "White Horses"
+    }
+  ]
+}

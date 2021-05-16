@@ -1,0 +1,16 @@
+block configuration
+
+html
+    head
+        title=pageTitle
+        link(rel="stylesheet" href="style.css")
+    body
+        p="Page name: " + pageName
+        each menuItem in items
+            if menuItem.key == pageName
+                p.active
+                    a(href=menuItem.key + ".html")=menuItem.name
+            else
+                p
+                    a(href=menuItem.key + ".html")=menuItem.name
+        block content
