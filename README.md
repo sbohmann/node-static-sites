@@ -52,3 +52,21 @@ In order to include a markdown file into a pug file, use the following syntax:
 Example:
 
     include:markdown-it giraffes.md
+
+# Globals
+
+Global variables are defined in `globals.json`. These values are visible from all `.page.pug` files and their includes.
+
+# Page information
+
+The variables `pageName`, `pageDirectory`, and `pagePath` are visible from all `.page.pug` files and their includes.
+
+Examples:
+
+    a/b/c/example.page.pug
+
+is generated. The page location related values visible to `a/b/c/example.page.pug` are:
+
+    pageName: example
+    pageDirectory: a/b/c
+    pagePath: a/b/c/example
