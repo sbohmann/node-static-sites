@@ -56,26 +56,34 @@ function addFileWritten(path) {
 }
 
 function walkDirectory(directory, handleFile) {
-  function walkSubdirectories(relativeSubDirectoryPath) {
+  function walkSubdirectories(relativeSubDirectoryPath, relativeRootPath) {
     let subDirectory = path.join(directory, relativeSubDirectoryPath);
     let directory_content = fs.readdirSync(subDirectory);
     for (let fileName of directory_content) {
       const filePath = path.join(directory, relativeSubDirectoryPath, fileName);
       const fileInformation = fs.lstatSync(filePath);
       if (fileInformation.isFile(filePath)) {
-        handleFile(fileName, filePath, relativeSubDirectoryPath);
+        handleFile(
+          fileName,
+          filePath,
+          relativeSubDirectoryPath,
+          relativeRootPath
+        );
       } else if (fileInformation.isDirectory()) {
-        walkSubdirectories(path.join(relativeSubDirectoryPath, fileName));
+        walkSubdirectories(
+          path.join(relativeSubDirectoryPath, fileName),
+          path.join(relativeRootPath, "../")
+        );
       }
     }
   }
-  walkSubdirectories("");
+  walkSubdirectories("", "");
 }
 
 function generatePages() {
   walkDirectory(
     source_directory,
-    (fileName, filePath, relativeSubDirectoryPath) => {
+    (fileName, filePath, relativeSubDirectoryPath, relativeRootPath) => {
       const pageSuffix = ".page.pug";
       if (filePath.endsWith(pageSuffix)) {
         let pugOptions = Object.assign({}, globals);
@@ -92,7 +100,8 @@ function generatePages() {
         pugOptions.basedir = source_directory;
         pugOptions.pageName = pageName;
         pugOptions.pageDirectory = relativeSubDirectoryPath;
-        pugOptions.pagePath = path.join(relativeSubDirectoryPath, pagePath);
+        pugOptions.pagePath = path.join(relativeSubDirectoryPath, pageName);
+        pugOptions.pageRootPath = relativeRootPath;
         let prettyOptions = {
           ocd: true,
         };
