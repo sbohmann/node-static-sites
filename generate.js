@@ -105,7 +105,17 @@ function generatePages() {
         let prettyOptions = {
           ocd: true,
         };
-        let rawOutput = pug.renderFile(filePath, pugOptions);
+        let rawOutput;
+        try {
+          rawOutput = pug.renderFile(filePath, pugOptions);
+        } catch (error) {
+          console.log("Error while processing [" + filePath + "]:");
+          console.log(error.message);
+          console.log(
+            "pug base directory (source directory): [" + source_directory + "]"
+          );
+          process.exit(1);
+        }
         let formattedOutput = pretty(rawOutput, prettyOptions);
         let outputFileName =
           fileName.substr(0, fileName.length - pageSuffix.length) + ".html";
