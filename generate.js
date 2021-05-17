@@ -5,9 +5,23 @@ const path = require("path");
 const pug = require("pug");
 const pretty = require("pretty");
 
-function read_configuration() {
-  const raw_configuration = fs.readFileSync("configuration.json");
-  return JSON.parse(raw_configuration);
+function readConfiguration() {
+  let configurationPath = "configuration.json";
+  if (fs.existsSync(configurationPath)) {
+    const raw_configuration = fs.readFileSync(configurationPath);
+    return JSON.parse(raw_configuration);
+  } else {
+    console.log("File [" + configurationPath + "] not found, creating it.");
+    let configuration = {
+      source_directory: "src",
+      static_content_directory: "static",
+      target_directory: "target",
+      overwrite_silently: false,
+      delete_non_generated_files: false,
+    };
+    fs.writeFileSync(configurationPath, JSON.stringify(configuration, null, 2));
+    return configuration;
+  }
 }
 
 const {
@@ -16,9 +30,21 @@ const {
   target_directory,
   overwrite_silently,
   delete_non_generated_files,
-} = read_configuration();
+} = readConfiguration();
 
-const globals = JSON.parse(fs.readFileSync("globals.json"));
+function readGlobals() {
+  let globalsPath = "globals.json";
+  if (fs.existsSync(globalsPath)) {
+    return JSON.parse(fs.readFileSync(globalsPath));
+  } else {
+    console.log("File [" + globalsPath + "] not found, creating it.");
+    let globals = {};
+    fs.writeFileSync(globalsPath, JSON.stringify(globals, null, 2));
+    return globals;
+  }
+}
+
+const globals = readGlobals();
 
 const filesWritten = new Set();
 
@@ -33,7 +59,6 @@ function walkDirectory(directory, handleFile) {
   function walkSubdirectories(relativeSubDirectoryPath) {
     let subDirectory = path.join(directory, relativeSubDirectoryPath);
     let directory_content = fs.readdirSync(subDirectory);
-    console.log(directory_content);
     for (let fileName of directory_content) {
       const filePath = path.join(directory, relativeSubDirectoryPath, fileName);
       const fileInformation = fs.lstatSync(filePath);
@@ -117,7 +142,6 @@ function deleteNonGeneratedFiles() {
   function walkSubdirectories(relativeSubDirectoryPath) {
     let subDirectory = path.join(target_directory, relativeSubDirectoryPath);
     let directory_content = fs.readdirSync(subDirectory);
-    console.log(directory_content);
     for (let fileName of directory_content) {
       const filePath = path.join(
         target_directory,
