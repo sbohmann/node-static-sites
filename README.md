@@ -59,7 +59,7 @@ Global variables are defined in `globals.json`. These values are visible from al
 
 # Page information
 
-The variables `pageName`, `pageDirectory`, `pagePath`, and `pageRootPath` are visible from all `.page.pug` files and their includes.
+The variables `pageName`, `pageDirectory`, `pagePath`, and `pageRootPath` are visible from all `.page.pug` files and their includes and templates they extend.
 
 Examples:
 
