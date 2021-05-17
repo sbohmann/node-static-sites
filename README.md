@@ -59,7 +59,7 @@ Global variables are defined in `globals.json`. These values are visible from al
 
 # Page information
 
-The variables `pageName`, `pageDirectory`, and `pagePath` are visible from all `.page.pug` files and their includes.
+The variables `pageName`, `pageDirectory`, `pagePath`, and `pageRootPath` are visible from all `.page.pug` files and their includes.
 
 Examples:
 
@@ -70,3 +70,6 @@ is generated. The page location related values visible to `a/b/c/example.page.pu
     pageName: example
     pageDirectory: a/b/c
     pagePath: a/b/c/example
+    pageRootPath: ../../../
+
+`pageRootPath` should ideally only be used when visiting a page in the browser from the local file system is crucial. Relative paths tend to be fragile and there's a code overhead involved in the templates.
