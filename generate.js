@@ -80,7 +80,10 @@ function generatePages() {
       if (filePath.endsWith(pageSuffix)) {
         let pugOptions = Object.assign({}, globals);
         let pageName = fileName.substr(0, fileName.length - pageSuffix.length);
-        let pagePath = filePath.substr(0, filePath.length - pageSuffix.length);
+        let pagePath = path.join(
+          relativeSubDirectoryPath,
+          fileName.substr(0, fileName.length - pageSuffix.length)
+        );
         const dataPath = pagePath + ".json";
         if (fs.existsSync(dataPath) && fs.lstatSync(dataPath).isFile()) {
           let rawData = fs.readFileSync(dataPath);
