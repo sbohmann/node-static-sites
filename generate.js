@@ -125,7 +125,7 @@ function generatePages() {
         );
         let outputPath = path.join(outputDirectory, outputFileName);
         if (!fs.existsSync(outputDirectory)) {
-          fs.mkdirSync(outputDirectory, { recursive: true });
+          create_directory(outputDirectory, { recursive: true });
         }
         if (!fs.existsSync(outputPath) || overwrite_silently) {
           addFileWritten(outputPath);
@@ -148,7 +148,7 @@ function copy_static_content() {
       );
       let outputPath = path.join(outputDirectory, fileName);
       if (!fs.existsSync(outputDirectory)) {
-        fs.mkdirSync(outputDirectory, { recursive: true });
+        create_directory(outputDirectory, { recursive: true });
       }
       if (!fs.existsSync(outputPath) || overwrite_silently) {
         addFileWritten(outputPath);
@@ -189,6 +189,7 @@ function deleteNonGeneratedFiles() {
 
 function create_directory(path) {
   if (!fs.existsSync(path)) {
+    console.log("Directory [" + path + "] not found, creating it.");
     fs.mkdirSync(path);
   }
 }
