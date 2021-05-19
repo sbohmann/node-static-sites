@@ -125,7 +125,7 @@ function generatePages() {
         );
         let outputPath = path.join(outputDirectory, outputFileName);
         if (!fs.existsSync(outputDirectory)) {
-          create_directory(outputDirectory, { recursive: true });
+          fs.mkdirSync(outputDirectory, { recursive: true });
         }
         if (!fs.existsSync(outputPath) || overwrite_silently) {
           addFileWritten(outputPath);
@@ -148,7 +148,7 @@ function copy_static_content() {
       );
       let outputPath = path.join(outputDirectory, fileName);
       if (!fs.existsSync(outputDirectory)) {
-        create_directory(outputDirectory, { recursive: true });
+        fs.mkdirSync(outputDirectory, { recursive: true });
       }
       if (!fs.existsSync(outputPath) || overwrite_silently) {
         addFileWritten(outputPath);
