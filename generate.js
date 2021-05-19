@@ -131,7 +131,7 @@ function generatePages() {
           addFileWritten(outputPath);
           fs.writeFileSync(outputPath, formattedOutput);
         } else {
-          console.log("Not overwriting existing file [" + outputPath + "]");
+          throw Error("Not overwriting existing file [" + outputPath + "]");
         }
       }
     }
@@ -154,7 +154,7 @@ function copy_static_content() {
         addFileWritten(outputPath);
         fs.copyFileSync(filePath, outputPath);
       } else {
-        console.log("Not overwriting existing file [" + outputPath + "]");
+        throw Error("Not overwriting existing file [" + outputPath + "]");
       }
     }
   );
