@@ -10,7 +10,7 @@
 - `static_content_directory`: Contains static content that is copied unchanged to the target directory.
 - `target_directory`: The target directory to which the generated pages and static are written.
 - `overwrite_silently`: If true, files in the target directory will be overwritten.
-- `delete_non_generated_files`: If true, files in the target directory not originating from generation or copying static content. Empty directories will be removed as well.
+- `delete_non_generated_files`: If true, files in the target directory not originating from generation or copying static content will be deleted. Empty directories will be removed as well.
 
 ## Risks associated with changing the configuration
 
