@@ -72,4 +72,4 @@ is generated. The page location related values visible to `a/b/c/example.page.pu
     pagePath: a/b/c/example
     pageRootPath: ../../../
 
-`pageRootPath` should ideally only be used when visiting a page in the browser from the local file system is crucial. Relative paths tend to be fragile and there's a code overhead involved in the templates.
+`pageRootPath` should ideally only be used when visiting a page in the browser from the local file system is crucial. Relative paths tend to be fragile and there's code overhead involved in the templates.
