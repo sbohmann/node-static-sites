@@ -56,12 +56,12 @@ function walkDirectory(directory, handleFile) {
       const filePath = path.join(directory, relativeSubDirectoryPath, fileName)
       const fileInformation = fs.lstatSync(filePath)
       if (fileInformation.isFile(filePath)) {
-        handleFile(
+        handleFile({
           fileName,
           filePath,
           relativeSubDirectoryPath,
           relativeRootPath
-        )
+        })
       } else if (fileInformation.isDirectory()) {
         walkSubdirectories(
           path.join(relativeSubDirectoryPath, fileName),
@@ -76,7 +76,8 @@ function walkDirectory(directory, handleFile) {
 function generatePages(self) {
   walkDirectory(
     self.source_directory,
-    (fileName, filePath, relativeSubDirectoryPath, relativeRootPath) => {
+    pageContext => {
+      const {fileName, filePath, relativeSubDirectoryPath, relativeRootPath} = pageContext
       const pageSuffix = ".page.pug"
       if (filePath.endsWith(pageSuffix)) {
         let pugOptions = Object.assign({}, self.globals)
@@ -134,7 +135,8 @@ function generatePages(self) {
 function copy_static_content(self) {
   walkDirectory(
     self.static_content_directory,
-    (fileName, filePath, relativeSubDirectoryPath) => {
+    directoryContext => {
+      const {fileName, filePath, relativeSubDirectoryPath}  = directoryContext
       let outputDirectory = path.join(
         self.target_directory,
         relativeSubDirectoryPath
