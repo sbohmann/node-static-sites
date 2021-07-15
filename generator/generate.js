@@ -78,37 +78,47 @@ function generatePage(self, directoryContext) {
     pugOptions.pageDirectory = relativeSubDirectoryPath
     pugOptions.pagePath = path.join(relativeSubDirectoryPath, pageName)
     pugOptions.pageRootPath = relativeRootPath
-    let prettyOptions = {
-      ocd: true
-    }
-    let rawOutput
-    try {
-      rawOutput = pug.renderFile(filePath, pugOptions)
-    } catch (error) {
-      console.log("Error while processing [" + filePath + "]:")
-      console.log(error.message)
-      console.log(
-          "pug base directory (source directory): [" + source_directory + "]"
-      )
-      process.exit(1)
-    }
-    let formattedOutput = pretty(rawOutput, prettyOptions)
-    let outputFileName =
-        fileName.substr(0, fileName.length - pageSuffix.length) + ".html"
-    let outputDirectory = path.join(
-        self.target_directory,
-        relativeSubDirectoryPath
+    let rawOutput = createRawOutput(filePath, pugOptions)
+    let formattedOutput = prettify(rawOutput)
+    writeOutputFile(fileName, pageSuffix, self, relativeSubDirectoryPath, formattedOutput)
+  }
+}
+
+function createRawOutput(filePath, pugOptions) {
+  try {
+    return pug.renderFile(filePath, pugOptions)
+  } catch (error) {
+    console.log("Error while processing [" + filePath + "]:")
+    console.log(error.message)
+    console.log(
+        "pug base directory (source directory): [" + source_directory + "]"
     )
-    let outputPath = path.join(outputDirectory, outputFileName)
-    if (!fs.existsSync(outputDirectory)) {
-      fs.mkdirSync(outputDirectory, {recursive: true})
-    }
-    if (!fs.existsSync(outputPath) || self.overwrite_silently) {
-      addFileWritten(self, outputPath)
-      fs.writeFileSync(outputPath, formattedOutput)
-    } else {
-      throw Error("Not overwriting existing file [" + outputPath + "]")
-    }
+    process.exit(1)
+  }
+}
+
+function prettify(rawOutput) {
+  return pretty(rawOutput, {
+    ocd: true
+  })
+}
+
+function writeOutputFile(fileName, pageSuffix, self, relativeSubDirectoryPath, formattedOutput) {
+  let outputFileName =
+      fileName.substr(0, fileName.length - pageSuffix.length) + ".html"
+  let outputDirectory = path.join(
+      self.target_directory,
+      relativeSubDirectoryPath
+  )
+  let outputPath = path.join(outputDirectory, outputFileName)
+  if (!fs.existsSync(outputDirectory)) {
+    fs.mkdirSync(outputDirectory, {recursive: true})
+  }
+  if (!fs.existsSync(outputPath) || self.overwrite_silently) {
+    addFileWritten(self, outputPath)
+    fs.writeFileSync(outputPath, formattedOutput)
+  } else {
+    throw Error("Not overwriting existing file [" + outputPath + "]")
   }
 }
 
