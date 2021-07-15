@@ -2,6 +2,11 @@
 
     npm install
 
+# Executing the Example
+
+    cd examples/menu
+    node ../../generator/generate.js
+
 # Configuration
 
 `configuration.json` contains the following settings:
