@@ -76,60 +76,64 @@ function walkDirectory(directory, handleFile) {
 function generatePages(self) {
   walkDirectory(
     self.source_directory,
-    pageContext => {
-      const {fileName, filePath, relativeSubDirectoryPath, relativeRootPath} = pageContext
-      const pageSuffix = ".page.pug"
-      if (filePath.endsWith(pageSuffix)) {
-        let pugOptions = Object.assign({}, self.globals)
-        let pageName = fileName.substr(0, fileName.length - pageSuffix.length)
-        let pagePath = path.join(
-          relativeSubDirectoryPath,
-          fileName.substr(0, fileName.length - pageSuffix.length)
-        )
-        const dataPath = pagePath + ".json"
-        if (fs.existsSync(dataPath) && fs.lstatSync(dataPath).isFile()) {
-          let rawData = fs.readFileSync(dataPath)
-          Object.assign(pugOptions, JSON.parse(rawData))
-        }
-        pugOptions.basedir = self.source_directory
-        pugOptions.pageName = pageName
-        pugOptions.pageDirectory = relativeSubDirectoryPath
-        pugOptions.pagePath = path.join(relativeSubDirectoryPath, pageName)
-        pugOptions.pageRootPath = relativeRootPath
-        let prettyOptions = {
-          ocd: true,
-        }
-        let rawOutput
-        try {
-          rawOutput = pug.renderFile(filePath, pugOptions)
-        } catch (error) {
-          console.log("Error while processing [" + filePath + "]:")
-          console.log(error.message)
-          console.log(
-            "pug base directory (source directory): [" + source_directory + "]"
-          )
-          process.exit(1)
-        }
-        let formattedOutput = pretty(rawOutput, prettyOptions)
-        let outputFileName =
-          fileName.substr(0, fileName.length - pageSuffix.length) + ".html"
-        let outputDirectory = path.join(
-          self.target_directory,
-          relativeSubDirectoryPath
-        )
-        let outputPath = path.join(outputDirectory, outputFileName)
-        if (!fs.existsSync(outputDirectory)) {
-          fs.mkdirSync(outputDirectory, { recursive: true })
-        }
-        if (!fs.existsSync(outputPath) || self.overwrite_silently) {
-          addFileWritten(self, outputPath)
-          fs.writeFileSync(outputPath, formattedOutput)
-        } else {
-          throw Error("Not overwriting existing file [" + outputPath + "]")
-        }
-      }
+    directoryContext => {
+      generatePage(self, directoryContext)
     }
   )
+}
+
+function generatePage(self, directoryContext) {
+  const {fileName, filePath, relativeSubDirectoryPath, relativeRootPath} = directoryContext
+  const pageSuffix = ".page.pug"
+  if (filePath.endsWith(pageSuffix)) {
+    let pugOptions = Object.assign({}, self.globals)
+    let pageName = fileName.substr(0, fileName.length - pageSuffix.length)
+    let pagePath = path.join(
+        relativeSubDirectoryPath,
+        fileName.substr(0, fileName.length - pageSuffix.length)
+    )
+    const dataPath = pagePath + ".json"
+    if (fs.existsSync(dataPath) && fs.lstatSync(dataPath).isFile()) {
+      let rawData = fs.readFileSync(dataPath)
+      Object.assign(pugOptions, JSON.parse(rawData))
+    }
+    pugOptions.basedir = self.source_directory
+    pugOptions.pageName = pageName
+    pugOptions.pageDirectory = relativeSubDirectoryPath
+    pugOptions.pagePath = path.join(relativeSubDirectoryPath, pageName)
+    pugOptions.pageRootPath = relativeRootPath
+    let prettyOptions = {
+      ocd: true
+    }
+    let rawOutput
+    try {
+      rawOutput = pug.renderFile(filePath, pugOptions)
+    } catch (error) {
+      console.log("Error while processing [" + filePath + "]:")
+      console.log(error.message)
+      console.log(
+          "pug base directory (source directory): [" + source_directory + "]"
+      )
+      process.exit(1)
+    }
+    let formattedOutput = pretty(rawOutput, prettyOptions)
+    let outputFileName =
+        fileName.substr(0, fileName.length - pageSuffix.length) + ".html"
+    let outputDirectory = path.join(
+        self.target_directory,
+        relativeSubDirectoryPath
+    )
+    let outputPath = path.join(outputDirectory, outputFileName)
+    if (!fs.existsSync(outputDirectory)) {
+      fs.mkdirSync(outputDirectory, {recursive: true})
+    }
+    if (!fs.existsSync(outputPath) || self.overwrite_silently) {
+      addFileWritten(self, outputPath)
+      fs.writeFileSync(outputPath, formattedOutput)
+    } else {
+      throw Error("Not overwriting existing file [" + outputPath + "]")
+    }
+  }
 }
 
 function copy_static_content(self) {
