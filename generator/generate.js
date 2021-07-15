@@ -6,6 +6,7 @@ const pug = require("pug")
 const pretty = require("pretty")
 const configuration = require('./configuration')
 const globals = require('./globals')
+const walkDirectory = require('./walk_directory')
 
 function generate() {
   let self = initialize()
@@ -46,31 +47,6 @@ function addFileWritten(self, path) {
     throw RangeError("Attempting to write output file twice: [" + path + "]")
   }
   self.filesWritten.add(path)
-}
-
-function walkDirectory(directory, handleFile) {
-  function walkSubdirectories(relativeSubDirectoryPath, relativeRootPath) {
-    let subDirectory = path.join(directory, relativeSubDirectoryPath)
-    let directory_content = fs.readdirSync(subDirectory)
-    for (let fileName of directory_content) {
-      const filePath = path.join(directory, relativeSubDirectoryPath, fileName)
-      const fileInformation = fs.lstatSync(filePath)
-      if (fileInformation.isFile(filePath)) {
-        handleFile({
-          fileName,
-          filePath,
-          relativeSubDirectoryPath,
-          relativeRootPath
-        })
-      } else if (fileInformation.isDirectory()) {
-        walkSubdirectories(
-          path.join(relativeSubDirectoryPath, fileName),
-          path.join(relativeRootPath, "../")
-        )
-      }
-    }
-  }
-  walkSubdirectories("", "")
 }
 
 function generatePages(self) {
