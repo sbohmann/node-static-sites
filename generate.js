@@ -5,22 +5,35 @@ const path = require("path");
 const pug = require("pug");
 const pretty = require("pretty");
 
+const configurationPath = "configuration.json";
+
 function readConfiguration() {
-  let configurationPath = "configuration.json";
   if (fs.existsSync(configurationPath)) {
-    const raw_configuration = fs.readFileSync(configurationPath);
-    return JSON.parse(raw_configuration);
+    return readConfigurationFile()
   } else {
-    console.log("File [" + configurationPath + "] not found, creating it.");
-    let configuration = {
-      source_directory: "src",
-      static_content_directory: "static",
-      target_directory: "target",
-      overwrite_silently: false,
-      delete_non_generated_files: false,
-    };
-    fs.writeFileSync(configurationPath, JSON.stringify(configuration, null, 2));
-    return configuration;
+    return createConfigurationFile()
+  }
+}
+
+function readConfigurationFile() {
+  const raw_configuration = fs.readFileSync(configurationPath);
+  return JSON.parse(raw_configuration);
+}
+
+function createConfigurationFile() {
+  console.log("File [" + configurationPath + "] not found, creating it.");
+  let configuration = freshConfiguration();
+  fs.writeFileSync(configurationPath, JSON.stringify(configuration, null, 2));
+  return configuration;
+}
+
+function freshConfiguration() {
+  return {
+    source_directory: "src",
+    static_content_directory: "static",
+    target_directory: "target",
+    overwrite_silently: false,
+    delete_non_generated_files: false
   }
 }
 
@@ -178,7 +191,7 @@ function deleteNonGeneratedFiles() {
       } else if (fileInformation.isDirectory()) {
         let subDirectoryPath = path.join(subDirectory, fileName);
         walkSubdirectories(path.join(relativeSubDirectoryPath, fileName));
-        if (fs.readdirSync(subDirectoryPath).length == 0) {
+        if (fs.readdirSync(subDirectoryPath).length === 0) {
           fs.rmdirSync(subDirectoryPath);
         }
       }
