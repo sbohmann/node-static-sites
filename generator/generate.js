@@ -80,7 +80,7 @@ function generatePage(self, directoryContext) {
     pugOptions.pageRootPath = relativeRootPath
     let rawOutput = createRawOutput(filePath, pugOptions)
     let formattedOutput = prettify(rawOutput)
-    writeOutputFile(fileName, pageSuffix, self, relativeSubDirectoryPath, formattedOutput)
+    writeOutputFile(self, fileName, pageSuffix, relativeSubDirectoryPath, formattedOutput)
   }
 }
 
@@ -103,7 +103,7 @@ function prettify(rawOutput) {
   })
 }
 
-function writeOutputFile(fileName, pageSuffix, self, relativeSubDirectoryPath, formattedOutput) {
+function writeOutputFile(self, fileName, pageSuffix, relativeSubDirectoryPath, formattedOutput) {
   let outputFileName =
       fileName.substr(0, fileName.length - pageSuffix.length) + ".html"
   let outputDirectory = path.join(
