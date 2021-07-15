@@ -22,13 +22,21 @@ function initialize() {
 function readGlobals() {
   let globalsPath = "globals.json";
   if (fs.existsSync(globalsPath)) {
-    return JSON.parse(fs.readFileSync(globalsPath));
+    return readGlobalsFile(globalsPath);
   } else {
-    console.log("File [" + globalsPath + "] not found, creating it.");
-    let globals = {};
-    fs.writeFileSync(globalsPath, JSON.stringify(globals, null, 2));
-    return globals;
+    return createGlobalsFile(globalsPath)
   }
+}
+
+function readGlobalsFile(globalsPath) {
+  return JSON.parse(fs.readFileSync(globalsPath))
+}
+
+function createGlobalsFile(globalsPath) {
+  console.log("File [" + globalsPath + "] not found, creating it.");
+  let globals = {};
+  fs.writeFileSync(globalsPath, JSON.stringify(globals, null, 2));
+  return globals;
 }
 
 function createDirectories(self) {
