@@ -1,6 +1,6 @@
-const fs = require("fs");
+const fs = require("fs")
 
-const configurationPath = "configuration.json";
+const configurationPath = "configuration.json"
 
 function read() {
     if (fs.existsSync(configurationPath)) {
@@ -11,15 +11,15 @@ function read() {
 }
 
 function readConfigurationFile() {
-    const raw_configuration = fs.readFileSync(configurationPath);
-    return JSON.parse(raw_configuration);
+    const raw_configuration = fs.readFileSync(configurationPath)
+    return JSON.parse(raw_configuration)
 }
 
 function createConfigurationFile() {
-    console.log("File [" + configurationPath + "] not found, creating it.");
-    let configuration = freshConfiguration();
-    fs.writeFileSync(configurationPath, JSON.stringify(configuration, null, 2));
-    return configuration;
+    console.log("File [" + configurationPath + "] not found, creating it.")
+    let configuration = freshConfiguration()
+    fs.writeFileSync(configurationPath, JSON.stringify(configuration, null, 2))
+    return configuration
 }
 
 function freshConfiguration() {
