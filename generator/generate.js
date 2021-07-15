@@ -42,13 +42,6 @@ function writeFiles(self) {
   }
 }
 
-function addFileWritten(self, path) {
-  if (self.filesWritten.has(path)) {
-    throw RangeError("Attempting to write output file twice: [" + path + "]")
-  }
-  self.filesWritten.add(path)
-}
-
 function generatePages(self) {
   walkDirectory(
     self.source_directory,
@@ -143,6 +136,13 @@ function copy_static_content(self) {
       }
     }
   )
+}
+
+function addFileWritten(self, path) {
+  if (self.filesWritten.has(path)) {
+    throw RangeError("Attempting to write output file twice: [" + path + "]")
+  }
+  self.filesWritten.add(path)
 }
 
 function deleteNonGeneratedFiles(self) {
