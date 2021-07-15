@@ -7,6 +7,24 @@ const pretty = require("pretty");
 
 const configurationPath = "configuration.json";
 
+function generate() {
+  let self = readConfiguration();
+
+  self.globals = readGlobals();
+
+  self.filesWritten = new Set();
+
+  create_directory(self.source_directory);
+  create_directory(self.static_content_directory);
+  create_directory(self.target_directory);
+
+  generatePages(self);
+  copy_static_content(self);
+  if (self.delete_non_generated_files) {
+    deleteNonGeneratedFiles();
+  }
+}
+
 function readConfiguration() {
   if (fs.existsSync(configurationPath)) {
     return readConfigurationFile()
@@ -37,14 +55,6 @@ function freshConfiguration() {
   }
 }
 
-const {
-  source_directory,
-  static_content_directory,
-  target_directory,
-  overwrite_silently,
-  delete_non_generated_files,
-} = readConfiguration();
-
 function readGlobals() {
   let globalsPath = "globals.json";
   if (fs.existsSync(globalsPath)) {
@@ -57,15 +67,11 @@ function readGlobals() {
   }
 }
 
-const globals = readGlobals();
-
-const filesWritten = new Set();
-
-function addFileWritten(path) {
-  if (filesWritten.has(path)) {
+function addFileWritten(self, path) {
+  if (self.filesWritten.has(path)) {
     throw RangeError("Attempting to write output file twice: [" + path + "]");
   }
-  filesWritten.add(path);
+  self.filesWritten.add(path);
 }
 
 function walkDirectory(directory, handleFile) {
@@ -93,13 +99,13 @@ function walkDirectory(directory, handleFile) {
   walkSubdirectories("", "");
 }
 
-function generatePages() {
+function generatePages(self) {
   walkDirectory(
-    source_directory,
+    self.source_directory,
     (fileName, filePath, relativeSubDirectoryPath, relativeRootPath) => {
       const pageSuffix = ".page.pug";
       if (filePath.endsWith(pageSuffix)) {
-        let pugOptions = Object.assign({}, globals);
+        let pugOptions = Object.assign({}, self.globals);
         let pageName = fileName.substr(0, fileName.length - pageSuffix.length);
         let pagePath = path.join(
           relativeSubDirectoryPath,
@@ -110,7 +116,7 @@ function generatePages() {
           let rawData = fs.readFileSync(dataPath);
           Object.assign(pugOptions, JSON.parse(rawData));
         }
-        pugOptions.basedir = source_directory;
+        pugOptions.basedir = self.source_directory;
         pugOptions.pageName = pageName;
         pugOptions.pageDirectory = relativeSubDirectoryPath;
         pugOptions.pagePath = path.join(relativeSubDirectoryPath, pageName);
@@ -133,15 +139,15 @@ function generatePages() {
         let outputFileName =
           fileName.substr(0, fileName.length - pageSuffix.length) + ".html";
         let outputDirectory = path.join(
-          target_directory,
+          self.target_directory,
           relativeSubDirectoryPath
         );
         let outputPath = path.join(outputDirectory, outputFileName);
         if (!fs.existsSync(outputDirectory)) {
           fs.mkdirSync(outputDirectory, { recursive: true });
         }
-        if (!fs.existsSync(outputPath) || overwrite_silently) {
-          addFileWritten(outputPath);
+        if (!fs.existsSync(outputPath) || self.overwrite_silently) {
+          addFileWritten(self, outputPath);
           fs.writeFileSync(outputPath, formattedOutput);
         } else {
           throw Error("Not overwriting existing file [" + outputPath + "]");
@@ -151,12 +157,12 @@ function generatePages() {
   );
 }
 
-function copy_static_content() {
+function copy_static_content(self) {
   walkDirectory(
-    static_content_directory,
+    self.static_content_directory,
     (fileName, filePath, relativeSubDirectoryPath) => {
       let outputDirectory = path.join(
-        target_directory,
+        self.target_directory,
         relativeSubDirectoryPath
       );
       let outputPath = path.join(outputDirectory, fileName);
@@ -164,7 +170,7 @@ function copy_static_content() {
         fs.mkdirSync(outputDirectory, { recursive: true });
       }
       if (!fs.existsSync(outputPath) || overwrite_silently) {
-        addFileWritten(outputPath);
+        addFileWritten(self, outputPath);
         fs.copyFileSync(filePath, outputPath);
       } else {
         throw Error("Not overwriting existing file [" + outputPath + "]");
@@ -173,7 +179,7 @@ function copy_static_content() {
   );
 }
 
-function deleteNonGeneratedFiles() {
+function deleteNonGeneratedFiles(self) {
   function walkSubdirectories(relativeSubDirectoryPath) {
     let subDirectory = path.join(target_directory, relativeSubDirectoryPath);
     let directory_content = fs.readdirSync(subDirectory);
@@ -185,7 +191,7 @@ function deleteNonGeneratedFiles() {
       );
       const fileInformation = fs.lstatSync(filePath);
       if (fileInformation.isFile(filePath)) {
-        if (!filesWritten.has(filePath)) {
+        if (!self.filesWritten.has(filePath)) {
           fs.unlinkSync(filePath);
         }
       } else if (fileInformation.isDirectory()) {
@@ -207,12 +213,4 @@ function create_directory(path) {
   }
 }
 
-create_directory(source_directory);
-create_directory(static_content_directory);
-create_directory(target_directory);
-
-generatePages(source_directory);
-copy_static_content(static_content_directory);
-if (delete_non_generated_files) {
-  deleteNonGeneratedFiles();
-}
+generate()
