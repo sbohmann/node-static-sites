@@ -5,6 +5,7 @@ const path = require("path");
 const pug = require("pug");
 const pretty = require("pretty");
 const configuration = require('./configuration')
+const globals = require('./globals')
 
 function generate() {
   let self = initialize()
@@ -14,29 +15,9 @@ function generate() {
 
 function initialize() {
   let self = configuration.read();
-  self.globals = readGlobals();
+  self.globals = globals.read();
   self.filesWritten = new Set();
   return self
-}
-
-function readGlobals() {
-  let globalsPath = "globals.json";
-  if (fs.existsSync(globalsPath)) {
-    return readGlobalsFile(globalsPath);
-  } else {
-    return createGlobalsFile(globalsPath)
-  }
-}
-
-function readGlobalsFile(globalsPath) {
-  return JSON.parse(fs.readFileSync(globalsPath))
-}
-
-function createGlobalsFile(globalsPath) {
-  console.log("File [" + globalsPath + "] not found, creating it.");
-  let globals = {};
-  fs.writeFileSync(globalsPath, JSON.stringify(globals, null, 2));
-  return globals;
 }
 
 function createDirectories(self) {
