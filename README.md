@@ -30,7 +30,7 @@ All with names ending in `.page.pug` files inside the source directory, at any l
 
 Files in the same location of the same name, but with names ending in `.json` instead of `.page.pug` will be read as the source of variables and configuration.
 
-In case the configuration value `basedir` is specified, it will be overwritten with the source directory (by default, `./src`) before generating the output.
+In case the pug configuration value `basedir` is specified, it will be overwritten with the source directory (by default, `./src`) before generating the output.
 
 Example:
 
