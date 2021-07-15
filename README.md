@@ -26,7 +26,7 @@ Do not clone this project into an existing folder containing important files.
 
     node generate.js
 
-All with names ending in `.page.pug` files inside the source directory, at any level, will be generated as .htnl files at the same location relative to the target directory.
+All with names ending in `.page.pug` files inside the source directory, at any level, will be generated as .html files at the same location relative to the target directory.
 
 Files in the same location of the same name, but with names ending in `.json` instead of `.page.pug` will be read as the source of variables and configuration.
 
