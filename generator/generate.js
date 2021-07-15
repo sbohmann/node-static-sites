@@ -38,7 +38,7 @@ function writeFiles(self) {
   generatePages(self)
   copy_static_content(self)
   if (self.delete_non_generated_files) {
-    deleteNonGeneratedFiles()
+    deleteNonGeneratedFiles(self)
   }
 }
 
@@ -128,7 +128,7 @@ function copy_static_content(self) {
       if (!fs.existsSync(outputDirectory)) {
         fs.mkdirSync(outputDirectory, { recursive: true })
       }
-      if (!fs.existsSync(outputPath) || overwrite_silently) {
+      if (!fs.existsSync(outputPath) || self.overwrite_silently) {
         addFileWritten(self, outputPath)
         fs.copyFileSync(filePath, outputPath)
       } else {
@@ -147,11 +147,11 @@ function addFileWritten(self, path) {
 
 function deleteNonGeneratedFiles(self) {
   function walkSubdirectories(relativeSubDirectoryPath) {
-    let subDirectory = path.join(target_directory, relativeSubDirectoryPath)
+    let subDirectory = path.join(self.target_directory, relativeSubDirectoryPath)
     let directory_content = fs.readdirSync(subDirectory)
     for (let fileName of directory_content) {
       const filePath = path.join(
-        target_directory,
+        self.target_directory,
         relativeSubDirectoryPath,
         fileName
       )

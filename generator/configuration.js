@@ -11,7 +11,7 @@ function read() {
 }
 
 function readConfigurationFile() {
-    const raw_configuration = fs.readFileSync(configurationPath)
+    const raw_configuration = fs.readFileSync(configurationPath, 'utf-8')
     return JSON.parse(raw_configuration)
 }
 
