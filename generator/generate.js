@@ -7,21 +7,18 @@ const pretty = require("pretty");
 const configuration = require('./configuration')
 
 function generate() {
+  let self = initialize()
+
+  createDirectories(self)
+
+  writeFiles(self)
+}
+
+function initialize() {
   let self = configuration.read();
-
   self.globals = readGlobals();
-
   self.filesWritten = new Set();
-
-  create_directory(self.source_directory);
-  create_directory(self.static_content_directory);
-  create_directory(self.target_directory);
-
-  generatePages(self);
-  copy_static_content(self);
-  if (self.delete_non_generated_files) {
-    deleteNonGeneratedFiles();
-  }
+  return self
 }
 
 function readGlobals() {
@@ -33,6 +30,20 @@ function readGlobals() {
     let globals = {};
     fs.writeFileSync(globalsPath, JSON.stringify(globals, null, 2));
     return globals;
+  }
+}
+
+function createDirectories(self) {
+  create_directory(self.source_directory);
+  create_directory(self.static_content_directory);
+  create_directory(self.target_directory);
+}
+
+function writeFiles(self) {
+  generatePages(self);
+  copy_static_content(self);
+  if (self.delete_non_generated_files) {
+    deleteNonGeneratedFiles();
   }
 }
 
