@@ -39,7 +39,7 @@ Example:
 
 `.pug` files not named `.page.pug` will be ignored.
 
-A file names `giraffes.page.json` will not be associated with `giraffes.page.pug`. The suffix `.page.pug` must be replaced with `.json` in order for a configuration file to be associated with a page file.
+A file named `giraffes.page.json` will not be associated with `giraffes.page.pug`. The suffix `.page.pug` must be replaced with `.json` in order for a configuration file to be associated with a page file.
 
 # Markdown
 
