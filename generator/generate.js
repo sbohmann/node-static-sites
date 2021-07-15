@@ -8,9 +8,7 @@ const configuration = require('./configuration')
 
 function generate() {
   let self = initialize()
-
   createDirectories(self)
-
   writeFiles(self)
 }
 
