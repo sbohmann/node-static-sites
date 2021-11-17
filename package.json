@@ -1,5 +1,5 @@
 {
-  "name": "nova-static-site",
+  "name": "at.yeoman.static-site",
   "version": "1.0.0",
   "description": "A static site generator using node, pug, and markdown",
   "author": "Sebastian Bohmann",
