@@ -4,6 +4,7 @@ const fs = require("fs")
 const path = require("path")
 const pug = require("pug")
 const pretty = require("pretty")
+const jsjoda = require('js-joda')
 const configuration = require('./configuration')
 const globals = require('./globals')
 const walkDirectory = require('./walk_directory')
@@ -71,6 +72,8 @@ function generatePage(self, directoryContext) {
     pugOptions.pageDirectory = relativeSubDirectoryPath
     pugOptions.pagePath = path.join(relativeSubDirectoryPath, pageName)
     pugOptions.pageRootPath = relativeRootPath
+    pugOptions.generationDate = jsjoda.LocalDate.now().toString()
+    pugOptions.generationDateTime = jsjoda.LocalDateTime.now().toString()
     let rawOutput = createRawOutput(self, filePath, pugOptions)
     let formattedOutput = prettify(rawOutput)
     writeOutputFile(self, fileName, pageSuffix, relativeSubDirectoryPath, formattedOutput)
@@ -81,11 +84,8 @@ function createRawOutput(self, filePath, pugOptions) {
   try {
     return pug.renderFile(filePath, pugOptions)
   } catch (error) {
-    console.log("Error while processing [" + filePath + "]:")
-    console.log(error.message)
-    console.log(
-        "pug base directory (source directory): [" + self.source_directory + "]"
-    )
+    console.log("Error while processing [" + filePath + "]:", error.message)
+    console.log("pug base directory (source directory): [" + self.source_directory + "]")
     process.exit(1)
   }
 }

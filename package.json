@@ -9,6 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "js-joda": "^1.11.0",
     "jstransformer-markdown-it": "^2.1.0",
     "markdown-it": "^12.0.6",
     "pretty": "^2.0.0",
