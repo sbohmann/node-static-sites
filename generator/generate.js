@@ -1,5 +1,3 @@
-#!/usr/local/bin/node
-
 const fs = require("fs")
 const path = require("path")
 const pug = require("pug")
@@ -9,7 +7,7 @@ const configuration = require('./configuration')
 const globals = require('./globals')
 const walkDirectory = require('./walk_directory')
 
-function generate() {
+exports.generate = function() {
   let self = initialize()
   createDirectories(self)
   writeFiles(self)
@@ -171,5 +169,3 @@ function deleteNonGeneratedFiles(self) {
   }
   walkSubdirectories("")
 }
-
-generate()
