@@ -1,11 +1,28 @@
-# Setup
+# Invocation
 
-    npm install
+This package provides a CLI. It can be called via the package name ```at.yeoman.static-site```
+from your node project after installing this package locally as a dependency.
 
-# Executing the Example
+Example assuming that ```node-static-sites``` and ```your project``` are located within the same directory:
 
-    cd examples/menu
-    node ../../generator/generate.js
+    npm install ../node_static_sites
+
+Inside your package.json, you can then add a script using the CLI. The script's name ```generate``` is arbitrary,
+it can be named whatever you like:
+
+    "scripts": {
+        "generate": "at.yeoman.static-site"
+    }
+
+Command line arguments for the CLI (see below) can be inserted after the package name:
+
+    "scripts": {
+        "generate": "at.yeoman.static-site <arguments>"
+    }
+
+## Command Line Arguments
+
+At the moment, there are no command line arguments.
 
 # Configuration
 
