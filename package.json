@@ -16,5 +16,7 @@
     "pretty": "^2.0.0",
     "pug": "^3.0.2"
   },
-  "bin": "cli.js"
+  "bin": {
+    "nssg": "cli.js"
+  }
 }
