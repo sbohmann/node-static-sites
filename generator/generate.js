@@ -55,10 +55,10 @@ function generatePage(self, directoryContext) {
   const pageSuffix = ".page.pug"
   if (filePath.endsWith(pageSuffix)) {
     let pugOptions = Object.assign({}, self.globals)
-    let pageName = fileName.substr(0, fileName.length - pageSuffix.length)
+    let pageName = fileName.substring(0, fileName.length - pageSuffix.length)
     let pagePath = path.join(
         relativeSubDirectoryPath,
-        fileName.substr(0, fileName.length - pageSuffix.length)
+        fileName.substring(0, fileName.length - pageSuffix.length)
     )
     const dataPath = pagePath + ".json"
     if (fs.existsSync(dataPath) && fs.lstatSync(dataPath).isFile()) {
@@ -96,7 +96,7 @@ function prettify(rawOutput) {
 
 function writeOutputFile(self, fileName, pageSuffix, relativeSubDirectoryPath, formattedOutput) {
   let outputFileName =
-      fileName.substr(0, fileName.length - pageSuffix.length) + ".html"
+      fileName.substring(0, fileName.length - pageSuffix.length) + ".html"
   let outputDirectory = path.join(
       self.target_directory,
       relativeSubDirectoryPath
