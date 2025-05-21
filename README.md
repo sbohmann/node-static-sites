@@ -5,7 +5,7 @@ from your node project after installing this package locally as a dependency.
 
 Example assuming that ```node-static-sites``` and ```your project``` are located within the same directory:
 
-npm install ../node-static-sites
+    npm install ../node-static-sites
 
 Inside your package.json, you can then add a script using the CLI. The script's name ```generate``` is arbitrary,
 it can be named whatever you like:
