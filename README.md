@@ -8,10 +8,10 @@ Example assuming that ```node-static-sites``` and ```your project``` are located
     npm install ../node-static-sites
 
 Inside your package.json, you can then add a script using the CLI. The script's name ```generate``` is arbitrary,
-it can be named whatever you like:
+it can be named whatever you like. "nssg" is short for node static site generator:
 
     "scripts": {
-        "generate": "at.yeoman.static-site"
+        "generate": "nssg"
     }
 
 Command line arguments for the CLI (see below) can be inserted after the package name:
