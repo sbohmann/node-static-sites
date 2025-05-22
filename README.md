@@ -17,12 +17,12 @@ it can be named whatever you like. "nssg" is short for node static site generato
 Command line arguments for the CLI (see below) can be inserted after the package name:
 
     "scripts": {
-        "generate": "at.yeoman.static-site <arguments>"
+        "generate": "nssg <arguments>"
     }
 
 ## Command Line Arguments
 
-At the moment, there are no command line arguments.
+At the moment, no command line arguments are accepted.
 
 # Configuration
 
