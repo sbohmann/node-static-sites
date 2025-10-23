@@ -109,7 +109,7 @@ function writeOutputFile(self, fileName, pageSuffix, relativeSubDirectoryPath, f
     addFileWritten(self, outputPath)
     fs.writeFileSync(outputPath, formattedOutput)
   } else {
-    throw Error("Not overwriting existing file [" + outputPath + "]")
+    throw Error("Not overwriting existing file [" + outputPath + "] due to a setting in configuration.js. Please consult README.md inside at.yeoman.static-site before altering any settings. Data loss by overwriting existing files may occur when activating this feature.")
   }
 }
 
@@ -130,7 +130,7 @@ function copy_static_content(self) {
         addFileWritten(self, outputPath)
         fs.copyFileSync(filePath, outputPath)
       } else {
-        throw Error("Not overwriting existing file [" + outputPath + "]")
+        throw Error("Not overwriting existing file [" + outputPath + "] due to a setting in configuration.js. Please consult README.md inside at.yeoman.static-site before altering any settings. Data loss by overwriting existing files may occur when activating this feature.")
       }
     }
   )
